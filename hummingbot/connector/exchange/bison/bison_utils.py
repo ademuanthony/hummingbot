@@ -4,7 +4,6 @@ from typing import Any, Dict
 from pydantic import Field, SecretStr
 
 from hummingbot.client.config.config_data_types import BaseConnectorConfigMap, ClientFieldData
-from hummingbot.connector.exchange.bison.app_data import app_data_dir
 from hummingbot.core.data_type.trade_fee import TradeFeeSchema
 
 CENTRALIZED = True
@@ -15,6 +14,41 @@ DEFAULT_FEES = TradeFeeSchema(
     taker_percent_fee_decimal=Decimal("0.001"),
     buy_percent_fee_deducted_from_returns=True
 )
+
+
+def new_request(route: str, payload):
+    return {"type": 1, "route": route, "id": 1, "payload": payload, "sig": ""}
+
+
+def format_balance(amount: Decimal, units="gwei") -> Decimal:
+    """
+    Converts the given amount from the passed unit to a human-readable format (base unit).
+
+    :param amount: The balance amount in the given units (e.g., wei, gwei, litoshi, sats, atoms).
+    :param units: The units of the input amount (e.g., wei, gwei, ether, litecoin, bitcoin, cosmos). Defaults to 'gwei'.
+    :return: The amount converted to its human-readable format as a Decimal.
+    """
+
+    # Conversion factors for each unit to its base human-readable form
+    unit_conversion = {
+        "wei": 10**18,             # 1 Ether = 10^18 wei
+        "gwei": 10**9,             # 1 Gwei = 10^9 wei
+        "ether": 1,                # Ether is already in human-readable format
+        "litoshi": 10**8,          # 1 Litecoin = 10^8 litoshi
+        "litecoin": 1,             # Litecoin is already in human-readable format
+        "sats": 10**8,             # 1 Bitcoin = 10^8 sats
+        "Sats": 10**8,             # 1 Bitcoin = 10^8 sats
+        "bitcoin": 1,              # Bitcoin is already in human-readable format
+        "atoms": 10**6,            # 1 ATOM = 10^6 atoms
+        "cosmos": 1,                # Cosmos is already in human-readable format
+        "microUSD": 10**6
+    }
+
+    if units not in unit_conversion:
+        return amount
+
+    # Divide the amount by the conversion factor to get the human-readable format
+    return amount / Decimal(unit_conversion[units])
 
 
 def is_exchange_information_valid(exchange_info: Dict[str, Any]) -> bool:
@@ -69,7 +103,7 @@ class BisonConfigMap(BaseConnectorConfigMap):
         )
     )
     bison_cert_path: str = Field(
-        default=app_data_dir("dcrx") + "/rpc.cert",
+        default="./certs/bison.cert",
         client_data=ClientFieldData(
             prompt=lambda cm: "Enter your Bison certificate path",
             is_secure=False,

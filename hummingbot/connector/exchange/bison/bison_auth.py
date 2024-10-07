@@ -1,3 +1,4 @@
+import base64
 import hashlib
 import hmac
 import json
@@ -64,7 +65,12 @@ class BisonAuth(AuthBase):
         return request_params
 
     def header_for_authentication(self) -> Dict[str, str]:
-        return {"X-MBX-APIKEY": self.rpc_password}
+        # Create the 'Authorization' header for Basic Authentication
+        auth_string = f"{self.rpc_username}:{self.rpc_password}".encode("utf-8")
+        basic_auth_header = base64.b64encode(auth_string).decode("utf-8")
+        return {
+            "Authorization": f"Basic {basic_auth_header}",
+        }
 
     def _generate_signature(self, params: Dict[str, Any]) -> str:
 

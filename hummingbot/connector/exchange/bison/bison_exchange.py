@@ -5,7 +5,12 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 from bidict import bidict
 
 from hummingbot.connector.constants import s_decimal_NaN
-from hummingbot.connector.exchange.bison import bison_constants as CONSTANTS, bison_utils, bison_web_utils as web_utils
+from hummingbot.connector.exchange.bison import (
+    bison_constants as CONSTANTS,
+    bison_utils,
+    bison_utils as utils,
+    bison_web_utils as web_utils,
+)
 from hummingbot.connector.exchange.bison.bison_api_order_book_data_source import BisonAPIOrderBookDataSource
 from hummingbot.connector.exchange.bison.bison_api_user_stream_data_source import BisonAPIUserStreamDataSource
 from hummingbot.connector.exchange.bison.bison_auth import BisonAuth
@@ -146,6 +151,7 @@ class BisonExchange(ExchangePyBase):
             throttler=self._throttler,
             time_synchronizer=self._time_synchronizer,
             domain=self._domain,
+            bison_cert_path=self.cert_path,
             auth=self._auth)
 
     def _create_order_book_data_source(self) -> OrderBookTrackerDataSource:
@@ -519,15 +525,22 @@ class BisonExchange(ExchangePyBase):
         local_asset_names = set(self._account_balances.keys())
         remote_asset_names = set()
 
-        account_info = await self._api_get(
-            path_url=CONSTANTS.ACCOUNTS_PATH_URL,
+        account_info = await self._api_post(
+            path_url="",
+            data=utils.new_request(CONSTANTS.WALLETS_ROUTE, {}),
             is_auth_required=True)
 
-        balances = account_info["balances"]
-        for balance_entry in balances:
-            asset_name = balance_entry["asset"]
-            free_balance = Decimal(balance_entry["free"])
-            total_balance = Decimal(balance_entry["free"]) + Decimal(balance_entry["locked"])
+        print(account_info)
+        assets = account_info["payload"]["result"]
+        for asset in assets:
+            asset_name = asset["symbol"]
+            if asset_name == "polygon":
+                asset_name = "matic"
+            balance_entry = asset["balance"]
+            free_balance = utils.format_balance(Decimal(balance_entry["available"]), asset["units"])
+            total_balance = utils.format_balance(Decimal(balance_entry["available"]) +
+                                                 Decimal(balance_entry["locked"]) +
+                                                 Decimal(balance_entry["immature"]), asset["units"])
             self._account_available_balances[asset_name] = free_balance
             self._account_balances[asset_name] = total_balance
             remote_asset_names.add(asset_name)

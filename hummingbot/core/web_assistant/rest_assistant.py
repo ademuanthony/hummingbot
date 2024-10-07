@@ -102,6 +102,7 @@ class RESTAssistant:
             return response
 
     async def call(self, request: RESTRequest, timeout: Optional[float] = None) -> RESTResponse:
+        print(request)
         request = deepcopy(request)
         request = await self._pre_process_request(request)
         request = await self._authenticate(request)

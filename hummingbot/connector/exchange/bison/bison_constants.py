@@ -1,17 +1,66 @@
 from hummingbot.core.api_throttler.data_types import LinkedLimitWeightPair, RateLimit
 from hummingbot.core.data_type.in_flight_order import OrderState
 
-DEFAULT_DOMAIN = "com"
+DEFAULT_DOMAIN = ""
 
 HBOT_ORDER_ID_PREFIX = "x-XEKWYICX"
 MAX_ORDER_ID_LEN = 32
 
 # Base URL
-REST_URL = "https://127.0.0.1:5757/{}"
+REST_RAW_URL = "https://127.0.0.1:5758"
+REST_URL = "https://127.0.0.1:5757"
 WSS_URL = "wss://127.0.0.1:5757/ws"
 
-PUBLIC_API_VERSION = "v3"
-PRIVATE_API_VERSION = "v3"
+PUBLIC_API_VERSION = ""
+PRIVATE_API_VERSION = ""
+
+# RPC routs
+CANCEL_ROUTE = "cancel"
+CLOSE_WALLET_ROUTE = "closewallet"
+DISCOVER_ACCT_ROUTE = "discoveracct"
+EXCHANGES_ROUTE = "exchanges"
+HELP_ROUTE = "help"
+INIT_ROUTE = "init"
+LOGIN_ROUTE = "login"
+LOGOUT_ROUTE = "logout"
+MY_ORDERS_ROUTE = "myorders"
+NEW_WALLET_ROUTE = "newwallet"
+OPEN_WALLET_ROUTE = "openwallet"
+TOGGLE_WALLET_STATUS_ROUTE = "togglewalletstatus"
+ORDER_BOOK_ROUTE = "orderbook"
+GET_DEX_CONF_ROUTE = "getdexconfig"
+BOND_ASSETS_ROUTE = "bondassets"
+POST_BOND_ROUTE = "postbond"
+BOND_OPTIONS_ROUTE = "bondopts"
+TRADE_ROUTE = "trade"
+VERSION_ROUTE = "version"
+WALLETS_ROUTE = "wallets"
+RESCAN_WALLET_ROUTE = "rescanwallet"
+WITHDRAW_ROUTE = "withdraw"
+SEND_ROUTE = "send"
+APPSEED_ROUTE = "appseed"
+DELETE_ARCHIVED_RECORDS_ROUTE = "deletearchivedrecords"
+WALLET_PEERS_ROUTE = "walletpeers"
+ADD_WALLET_PEER_ROUTE = "addwalletpeer"
+REMOVE_WALLET_PEER_ROUTE = "removewalletpeer"
+NOTIFICATIONS_ROUTE = "notifications"
+STARTBOT_ROUTE = "startmmbot"
+STOPBOT_ROUTE = "stopmmbot"
+UPDATE_RUNNING_BOT_CFG_ROUTE = "updaterunningbotcfg"
+UPDATE_RUNNING_BOT_INV_ROUTE = "updaterunningbotinv"
+MM_AVAILABLE_BALANCES_ROUTE = "mmavailablebalances"
+MMSTATUS_ROUTE = "mmstatus"
+MULTITRADE_ROUTE = "multitrade"
+STAKE_STATUS_ROUTE = "stakestatus"
+SETVSP_ROUTE = "setvsp"
+PURCHASE_TICKETS_ROUTE = "purchasetickets"
+SET_VOTING_PREFERENCES_ROUTE = "setvotingprefs"
+TXHISTORY_ROUTE = "txhistory"
+WALLETTX_ROUTE = "wallettx"
+WITHDRAW_BCHSPV_ROUTE = "withdrawbchspv"
+
+LOGIN_URL_PATH = "/api/login"
+USER_URL_PATH = "/api/user"
 
 # Public API endpoints or BisonClient function
 TICKER_PRICE_CHANGE_PATH_URL = "/ticker/24hr"
@@ -22,7 +71,7 @@ SNAPSHOT_PATH_URL = "/depth"
 SERVER_TIME_PATH_URL = "/time"
 
 # Private API endpoints or BisonClient function
-ACCOUNTS_PATH_URL = "/account"
+ACCOUNTS_PATH_URL = ""
 MY_TRADES_PATH_URL = "/myTrades"
 ORDER_PATH_URL = "/order"
 BINANCE_USER_STREAM_PATH_URL = "/userDataStream"
